@@ -25,10 +25,8 @@ Upon checking that the required dependencies are installed, you can upload Concu
 * open a terminal window;
 * type in the command: ```pip install Concurrent_AP```
 
-Usage and Exemple
------------------
-
-See the docstrings associated to each function of the Concurrent_AP module for morre information and an understanding of how different tasks are organized and shared across subprocesses.
+Demo of Concurrent_AP
+---------------------
 
 The following few lines illustrate the use of Concurrent_AP on the 'Iris data-set' from the UCI Machine Learning Repository. While the number of samples is here way too small for the benefits of the present multi-tasking implementation and the use of an HDF5 data structure to come into play, this data-set comes with the advantage of being well-known and prone to a quick comparison with scikit-learn's version of Affinity Propagation clustering.
 
@@ -51,8 +49,12 @@ The latter will automatically compute a preference parameter from the data-set.
 
 When the rounds of message-passing among data-points have completed, a folder containing a file of cluster labels and a file of cluster centers indices both in tab-separated format is created in your current working directory.
 
-Command Line Options
---------------------
+Usage and Command Line Options
+------------------------------
+
+See the docstrings associated to each function of the Concurrent_AP module for more information and an understanding of how different tasks are organized and shared across subprocesses.
+
+Usage: ```./Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held.
 
 * ```-c``` or ```--convergence```: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
 * ```-d``` or ```--damping```: the damping parameter of Affinity Propagation (defaults to 0.5);
