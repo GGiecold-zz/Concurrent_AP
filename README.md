@@ -25,34 +25,10 @@ Upon checking that the required dependencies are installed, you can upload Concu
 * open a terminal window;
 * type in the command: ```pip install Concurrent_AP```
 
-Demo of Concurrent_AP
----------------------
-
-The following few lines illustrate the use of Concurrent_AP on the 'Iris data-set' from the UCI Machine Learning Repository. While the number of samples is here way too small for the benefits of the present multi-tasking implementation and the use of an HDF5 data structure to come into play, this data-set comes with the advantage of being well-known and prone to a quick comparison with scikit-learn's version of Affinity Propagation clustering.
-
-* In a Python interpreter console, enter the following few lines, whose purpose is to create a file containing the Iris data-set to be later subjected to Affinity Propagation clustering via Concurrent_AP:
-
-```
->>> import numpy as np
->>> from sklearn import datasets
-
->>> iris = datasets.load_iris()
->>> data = iris.data
->>> with open('./iris_data.txt', 'w') as f:
-    np.loadtxt(f, data, fmt = '%.4f')
-```
-
-* Open a terminal window.
-* Type in: ```./Concurrent_AP --preference 5.47 --verbose iris_data.txt``` or simply ```./Concurrent_AP iris_data.txt```
-
-The latter will automatically compute a preference parameter from the data-set.
-
-When the rounds of message-passing among data-points have completed, a folder containing a file of cluster labels and a file of cluster centers indices both in tab-separated format is created in your current working directory.
-
 Usage and Command Line Options
 ------------------------------
 
-See the docstrings associated to each function of the Concurrent_AP module for more information and an understanding of how different tasks are organized and shared across subprocesses.
+See the docstrings associated to each function of the Concurrent_AP module for more information and an understanding of how different tasks are organized and shared among subprocesses.
 
 Usage: ```./Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held.
 
@@ -62,8 +38,32 @@ Usage: ```./Concurrent_AP [options] file_name```, where ```file_name``` denotes 
 * ```-i``` or ```--iterations```: maximum number of message-passing iterations (defaults to 200);
 * ```-m``` or ```--multiprocessing```: the number of processes to use;
 * ```-p``` or ```--preference```: the preference parameter of Affinity Propagation (if not specified, will be determined as the median of the distribution of pairwise L2 Euclidean distances between samples);
-* ```-s``` or ```--similarities```: determine if a similarity matrix has been pre-computed and stored in the HDF5 data structure accessible at the location specified through the command line option -f or --file (see above);
+* ```-s``` or ```--similarities```: determine if a similarity matrix has been pre-computed and stored in the HDF5 data structure accessible at the location specified through the command line option ```-f``` or ```--file``` (see above);
 * ```-v``` or ```--verbose```: whether to be verbose.
+
+Demo of Concurrent_AP
+---------------------
+
+The following few lines illustrate the use of Concurrent_AP on the 'Iris data-set' from the UCI Machine Learning Repository. While the number of samples is here way too small for the benefits of the present multi-tasking implementation and the use of an HDF5 data structure to come fully into play, this data-set has the advantage of being well-known and prone to a quick comparison with scikit-learn's version of Affinity Propagation clustering.
+
+* In a Python interpreter console, enter the following few lines, whose purpose is to create a file containing the Iris data-set that will be later subjected to Affinity Propagation clustering via Concurrent_AP:
+
+```
+>>> import numpy as np
+>>> from sklearn import datasets
+
+>>> iris = datasets.load_iris()
+>>> data = iris.data
+>>> with open('./iris_data.txt', 'w') as f:
+    np.savetxt(f, data, fmt = '%.4f')
+```
+
+* Open a terminal window.
+* Type in: ```./Concurrent_AP --preference 5.47 --v iris_data.txt``` or simply ```./Concurrent_AP iris_data.txt```
+
+The latter will automatically compute a preference parameter from the data-set.
+
+When the rounds of message-passing among data-points have completed, a folder containing a file of cluster labels and a file of cluster centers indices both in tab-separated format is created in your current working directory.
 
 References
 ----------
