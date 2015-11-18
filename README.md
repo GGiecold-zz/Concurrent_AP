@@ -23,7 +23,7 @@ Concurrent_AP requires Python 2.7 along with the following packages and a few mo
 
 Upon checking that the required dependencies are installed, you can upload Concurrent_AP from the official Python Package Index (PyPI) as follows:
 * open a terminal window;
-* type in the command: ''pip install Concurrent_AP''
+* type in the command: ```pip install Concurrent_AP```
 
 Usage and Exemple
 -----------------
@@ -34,7 +34,7 @@ The following few lines illustrate the use of Concurrent_AP on the 'Iris data-se
 
 * In a Python interpreter console, enter the following few lines, whose purpose is to create a file containing the Iris data-set to be later subjected to Affinity Propagation clustering via Concurrent_AP:
 
-'''
+```
 >>> import numpy as np
 >>> from sklearn import datasets
 
@@ -42,10 +42,10 @@ The following few lines illustrate the use of Concurrent_AP on the 'Iris data-se
 >>> data = iris.data
 >>> with open('./iris_data.txt', 'w') as f:
     np.loadtxt(f, data, fmt = '%.4f')
-'''
+```
 
 * Open a terminal window.
-* Type in: ''./Concurrent_AP --preference 5.47 --verbose iris_data.txt'' or simply ''./Concurrent_AP iris_data.txt''
+* Type in: ```./Concurrent_AP --preference 5.47 --verbose iris_data.txt``` or simply ```./Concurrent_AP iris_data.txt```
 
 The latter will automatically compute a preference parameter from the data-set.
 
@@ -54,16 +54,14 @@ When the rounds of message-passing among data-points have completed, a folder co
 Command Line Options
 --------------------
 
-
-
-* -c or --convergence: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
-* -d or --damping: the damping parameter of Affinity Propagation (defaults to 0.5);
-* -f or --file: option to specify the file name or file handle of the hierarchical data format where the matrices involved in Affinity Propagation clustering will be stored (defaults to a temporary file);
-* -i or --iterations: maximum number of message-passing iterations (defaults to 200);
-* -m or --multiprocessing: the number of processes to use;
-* -p or --preference: the preference parameter of Affinity Propagation (if not specified, will be determined as the median of the distribution of pairwise L2 Euclidean distances between samples);
-* -s or --similarities: determine if a similarity matrix has been pre-computed and stored in the HDF5 data structure accessible at the location specified through the command line option -f or --file (see above);
-* -v or --verbose: whether to be verbose.
+* ```-c``` or ```--convergence```: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
+* ```-d``` or ```--damping```: the damping parameter of Affinity Propagation (defaults to 0.5);
+* ```-f``` or ```--file```: option to specify the file name or file handle of the hierarchical data format where the matrices involved in Affinity Propagation clustering will be stored (defaults to a temporary file);
+* ```-i``` or ```--iterations```: maximum number of message-passing iterations (defaults to 200);
+* ```-m``` or ```--multiprocessing```: the number of processes to use;
+* ```-p``` or ```--preference```: the preference parameter of Affinity Propagation (if not specified, will be determined as the median of the distribution of pairwise L2 Euclidean distances between samples);
+* ```-s``` or ```--similarities```: determine if a similarity matrix has been pre-computed and stored in the HDF5 data structure accessible at the location specified through the command line option -f or --file (see above);
+* ```-v``` or ```--verbose```: whether to be verbose.
 
 References
 ----------
