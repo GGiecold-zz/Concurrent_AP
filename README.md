@@ -59,7 +59,7 @@ The following few lines illustrate the use of Concurrent_AP on the 'Iris data-se
 ```
 
 * Open a terminal window.
-* Type in: ```Concurrent_AP --preference 5.47 --v iris_data.txt``` or simply ```Concurrent_AP iris_data.txt```
+* Type in: ```Concurrent_AP --preference -5.47 --v iris_data.txt``` or simply ```Concurrent_AP iris_data.txt```
 
 The latter will automatically compute a preference parameter from the data-set.
 
