@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 
-
-
 # Concurrent_AP/Concurrent_AP.py
 
 # Author: Gregory Giecold for the GC Yuan Lab
@@ -10,7 +8,7 @@
 # Contact: g.giecold@gmail.com, ggiecold@jimmy.harvard.edu
 
 
-r"""Concurrent_AP is a scalable and concurrent programming implementation 
+"""Concurrent_AP is a scalable and concurrent programming implementation 
 of Affinity Propagation clustering. 
 
 Affinity Propagation is a clustering algorithm based on passing messages 
@@ -34,12 +32,6 @@ Data Points", Science Feb. 2007
 """
 
 
-
-
-#***************************************************************************************
-#***************************************************************************************
-
-
 from abc import ABCMeta, abstractmethod
 from contextlib import closing
 from ctypes import c_double, c_int
@@ -60,27 +52,17 @@ np.seterr(invalid = 'ignore')
 warnings.filterwarnings('ignore', category = DeprecationWarning)
 
 
-#***************************************************************************************
-#***************************************************************************************
-
-
 __all__ = []
 
 
-#***************************************************************************************
-# memory
-#***************************************************************************************
-
-
 def memory():
-    r"""Determine memory specifications of the machine.
+    """Determine memory specifications of the machine.
 
     Returns
     -------
     mem_info : dictonary
         Holds the current values for the total, free and used memory of the system.
     """
-
 
     mem_info = {}
 
@@ -98,13 +80,8 @@ def memory():
     return mem_info
 
 
-#***************************************************************************************
-# get_chunk_size
-#***************************************************************************************
-
-
 def get_chunk_size(N, n):
-    r"""Given a two-dimensional array with a dimension of size 'N', 
+    """Given a two-dimensional array with a dimension of size 'N', 
         determine the number of rows or columns that can fit into memory.
 
     Parameters
@@ -120,7 +97,6 @@ def get_chunk_size(N, n):
     chunk_size : int
         The size of the dimension orthogonal to the one of size 'N'. 
     """
-
 
     mem_free = memory()['free']
     if mem_free > 60000000:
@@ -151,15 +127,10 @@ def get_chunk_size(N, n):
         print("\nERROR: Concurrent_AP: get_chunk_size: this machine does not "
               "have enough free memory.\n")
         sys.exit(1)
-        
-        
-#***************************************************************************************
-# chunk_generator
-#*****************************************************************************
-        
-        
+
+
 def chunk_generator(N, n):
-    r"""Returns a generator of slice objects.
+    """Returns a generator of slice objects.
     
     Parameters
     ----------
@@ -176,20 +147,14 @@ def chunk_generator(N, n):
     the set of indices specified by 'range(start, stop)'. 
     """
 
-
     chunk_size = get_chunk_size(N, n)
     
     for start in xrange(0, N, chunk_size):
         yield slice(start, min(start + chunk_size, N))
-
-        
-#***************************************************************************************
-# parse_options
-#***************************************************************************************
     
     
 def parse_options():
-    r"""Specify the command line options to parse.
+    """Specify the command line options to parse.
     
     Returns
     -------
@@ -200,7 +165,6 @@ def parse_options():
         The name of the file storing the data-set submitted
         for Affinity Propagation clustering.
     """
-
 
     parser = optparse.OptionParser(
                         usage = "Usage: %prog [options] file_name\n\n"
@@ -277,15 +241,10 @@ def parse_options():
                      "between 0.5 and 1.0")
         
     return opts, args[0]
-
-    
-#***************************************************************************************
-# check_HDF5_arrays
-#***************************************************************************************
     
     
 def check_HDF5_arrays(hdf5_file, N, convergence_iter):
-    r"""Check that the HDF5 data structure of file handle 'hdf5_file' 
+    """Check that the HDF5 data structure of file handle 'hdf5_file' 
         has all the required nodes organizing the various two-dimensional 
         arrays required for Affinity Propagation clustering 
         ('Responsibility' matrix, 'Availability', etc.).
@@ -304,7 +263,6 @@ def check_HDF5_arrays(hdf5_file, N, convergence_iter):
         that stops the convergence.
     """
     
-
     Worker.hdf5_lock.acquire()
 
     with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -330,24 +288,17 @@ def check_HDF5_arrays(hdf5_file, N, convergence_iter):
                      "clustering", filters = filters)
                      
     Worker.hdf5_lock.release()
-            
-
-#***************************************************************************************
-# class Worker
-#***************************************************************************************
 
         
 class Worker(multiprocessing.Process):
-    r"""Abstract Base Class whose methods are meant to be overriden 
+    """Abstract Base Class whose methods are meant to be overriden 
         by the various classes of processes designed to handle 
         the various stages of Affinity Propagation clustering.
     """
     
-    
     __metaclass__ = ABCMeta
     
     hdf5_lock = multiprocessing.Lock()
-    
     
     @abstractmethod
     def __init__(self, hdf5_file, path, slice_queue):
@@ -356,7 +307,6 @@ class Worker(multiprocessing.Process):
         self.path = path
         self.slice_queue = slice_queue
         
-                    
     def run(self):
         while True:
             try:
@@ -365,28 +315,20 @@ class Worker(multiprocessing.Process):
             finally:
                 self.slice_queue.task_done()
                 
-    
     @abstractmethod
     def process(self, slc):
         raise NotImplementedError() 
 
 
-#***************************************************************************************
-# class Similarities_worker
-#***************************************************************************************       
-
-
 class Similarities_worker(Worker):
-    r"""Class of worker processes handling the computation of 
+    """Class of worker processes handling the computation of 
         a similarities matrix of pairwise distances between samples.
     """
-        
         
     def __init__(self, hdf5_file, path, array, slice_queue):
         super(self.__class__, self).__init__(hdf5_file, path, slice_queue)
         self.array = array
         
-                
     def process(self, rows_slice):
         tmp = self.array[rows_slice, ...]
         result = - euclidean_distances(tmp, self.array, squared = True)
@@ -397,25 +339,18 @@ class Similarities_worker(Worker):
                 hdf5_array[rows_slice, ...] = result
                 
         del tmp
-        
-            
-#***************************************************************************************
-# class Fluctuations_worker
-#***************************************************************************************                   
 
 
 class Fluctuations_worker(Worker):
-    r"""Class of worker processes adding small random fluctuations 
+    """Class of worker processes adding small random fluctuations 
         to the array specified by the node accessed via 'path' in 'hdf5_file'.  
     """    
-        
         
     def __init__(self, hdf5_file, path, random_state, N, slice_queue):
         super(self.__class__, self).__init__(hdf5_file, path, slice_queue)
         self.random_state = random_state
         self.N = N
         
-                
     def process(self, rows_slice):
         with Worker.hdf5_lock:
             with tables.open_file(self.hdf5_file, 'r+') as fileh:
@@ -435,22 +370,15 @@ class Fluctuations_worker(Worker):
         del X
             
             
-#***************************************************************************************
-# class Responsibilities_worker
-#***************************************************************************************           
-
-
 class Responsibilities_worker(Worker):
-    r"""Class of worker processes that are tasked with computing 
+    """Class of worker processes that are tasked with computing 
         and updating the responsibility matrix.
     """
-
 
     def __init__(self, hdf5_file, path, N, damping, slice_queue):
         super(self.__class__, self).__init__(hdf5_file, path, slice_queue)
         self.N = N
         self.damping = damping
-        
         
     def process(self, rows_slice):
         Worker.hdf5_lock.acquire()
@@ -500,38 +428,26 @@ class Responsibilities_worker(Worker):
         
         del a, r, s, tmp
         
-        
-#***************************************************************************************
-# class Rows_worker
-#***************************************************************************************           
-
 
 class Rows_worker(Worker):
-    r"""The processes instantiated from this class compute the sums 
+    """The processes instantiated from this class compute the sums 
         of row entries in an array accessed at node 'path' from the 
         hierarchidal data format at 'hdf5_file'. Those sums are stored 
         in the shared multiprocessing.Array data structure 'g_rows_sum'.
     """
-
 
     def __init__(self, hdf5_file, path, N, slice_queue, g_rows_sum):
         super(self.__class__, self).__init__(hdf5_file, path, slice_queue)
         self.N = N
         self.g_rows_sum = g_rows_sum
         
-      
     def process(self, rows_slice):
         get_sum(self.hdf5_file, self.path, self.g_rows_sum, 
                 out_lock, rows_slice)        
      
             
-#***************************************************************************************
-# get_sum
-#***************************************************************************************
-
-
 def get_sum(hdf5_file, path, array_out, out_lock, rows_slice):
-    r"""Access an array at node 'path' of the 'hdf5_file', compute the sums 
+    """Access an array at node 'path' of the 'hdf5_file', compute the sums 
         along a slice of rows specified by 'rows_slice' and add the resulting 
         vector to 'array_out'.
     
@@ -556,7 +472,6 @@ def get_sum(hdf5_file, path, array_out, out_lock, rows_slice):
         Specifies a range of rows indices.
     """
     
-    
     Worker.hdf5_lock.acquire()
     
     with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -572,23 +487,16 @@ def get_sum(hdf5_file, path, array_out, out_lock, rows_slice):
     del tmp
     
                 
-#***************************************************************************************
-# class Availabilities_worker
-#***************************************************************************************           
-
-
 class Availabilities_worker(Worker):
-    r"""Class of processes working on the computation and update of the 
+    """Class of processes working on the computation and update of the 
         availability matrix for Affinity Propagation Clustering.
     """
-
 
     def __init__(self, hdf5_file, path, N, damping, slice_queue, rows_sum):
         super(self.__class__, self).__init__(hdf5_file, path, slice_queue)
         self.N = N
         self.damping = damping
         self.rows_sum = rows_sum
-        
         
     def process(self, rows_slice):
                     
@@ -625,15 +533,10 @@ class Availabilities_worker(Worker):
                 T[rows_slice, ...] = tmp
                 
         del a, tmp
-    
-
-#***************************************************************************************
-# terminate_processes
-#***************************************************************************************
 
 
 def terminate_processes(pid_list):
-    r"""Terminate a list of processes by sending to each of them a SIGTERM signal, 
+    """Terminate a list of processes by sending to each of them a SIGTERM signal, 
         pre-emptively checking if its PID might have been reused.
     
     Parameters
@@ -642,25 +545,18 @@ def terminate_processes(pid_list):
         A list of process identifiers identifying active processes.
     """
 
-
     for proc in psutil.process_iter():
         if proc.pid in pid_list:
             proc.terminate()
              
                   
-#***************************************************************************************
-# compute_similarities
-#***************************************************************************************
-
-
 def compute_similarities(hdf5_file, data, N_processes):
-    r"""Compute a matrix of pairwise L2 Euclidean distances among samples from 'data'.
+    """Compute a matrix of pairwise L2 Euclidean distances among samples from 'data'.
         This computation is to be done in parallel by 'N_processes' distinct processes. 
         Those processes (which are instances of the class 'Similarities_worker') 
         are prevented from simultaneously accessing the HDF5 data structure 
         at 'hdf5_file' through the use of a multiprocessing.Lock object.
     """
-
 
     slice_queue = multiprocessing.JoinableQueue()
     
@@ -682,17 +578,11 @@ def compute_similarities(hdf5_file, data, N_processes):
     gc.collect()
     
 
-#***************************************************************************************
-# add_preference
-#***************************************************************************************
-
-
 def add_preference(hdf5_file, preference):
-    r"""Assign the value 'preference' to the diagonal entries
+    """Assign the value 'preference' to the diagonal entries
         of the matrix of similarities stored in the HDF5 data structure 
         at 'hdf5_file'.
     """
-
 
     Worker.hdf5_lock.acquire()
     
@@ -703,19 +593,13 @@ def add_preference(hdf5_file, preference):
         
     Worker.hdf5_lock.release()
             
-            
-#***************************************************************************************
-# add_fluctuations
-#***************************************************************************************
-    
 
 def add_fluctuations(hdf5_file, N_columns, N_processes):
-    r"""This procedure organizes the addition of small fluctuations on top of 
+    """This procedure organizes the addition of small fluctuations on top of 
         a matrix of similarities at 'hdf5_file' across 'N_processes' 
         different processes. Each of those processes is an instance of the 
         class 'Fluctuations_Worker' defined elsewhere in this module.
     """
-
 
     random_state = np.random.RandomState(0)
         
@@ -740,18 +624,12 @@ def add_fluctuations(hdf5_file, N_columns, N_processes):
     gc.collect()
     
     
-#***************************************************************************************
-# compute_responsibilities
-#***************************************************************************************
-    
-
 def compute_responsibilities(hdf5_file, N_columns, damping, N_processes):
-    r"""Organize the computation and update of the responsibility matrix
+    """Organize the computation and update of the responsibility matrix
         for Affinity Propagation clustering with 'damping' as the eponymous 
         damping parameter. Each of the processes concurrently involved in this task 
         is an instance of the class 'Responsibilities_worker' defined above.
     """
-
 
     slice_queue = multiprocessing.JoinableQueue()
     
@@ -771,63 +649,39 @@ def compute_responsibilities(hdf5_file, N_columns, damping, N_processes):
     
     terminate_processes(pid_list)
     
-
-#***************************************************************************************
-# rows_sum_init
-#*************************************************************************************** 
-    
     
 def rows_sum_init(hdf5_file, path, out_lock, *numpy_args):
-    r"""Create global variables sharing the same object as the one pointed by
+    """Create global variables sharing the same object as the one pointed by
         'hdf5_file', 'path' and 'out_lock'.
         Also Create a NumPy array copy of a multiprocessing.Array ctypes array 
         specified by '*numpy_args'.
     """
-
 
     global g_hdf5_file, g_path, g_out, g_out_lock
         
     g_hdf5_file, g_path, g_out_lock = hdf5_file, path, out_lock
     g_out = to_numpy_array(*numpy_args)
         
-        
-#***************************************************************************************
-# multiprocessing_get_sum
-#***************************************************************************************            
-    
 
 def multiprocessing_get_sum(columns_slice):
 
     get_sum(g_hdf5_file, g_path, g_out, g_out_lock, columns_slice)    
      
     
-#***************************************************************************************
-# to_numpy_array
-#***************************************************************************************
-    
-    
 def to_numpy_array(multiprocessing_array, shape, dtype):
-    r"""Convert a share multiprocessing array to a numpy array.
+    """Convert a share multiprocessing array to a numpy array.
         No data copying involved.
     """
-
 
     return np.frombuffer(multiprocessing_array.get_obj(),
                          dtype = dtype).reshape(shape)
 
 
-#***************************************************************************************
-# compute_rows_sum
-#***************************************************************************************
-    
-
-def compute_rows_sum(hdf5_file, path, N_columns, N_processes, 
-                     method = 'Process'):
-    r"""Parallel computation of the sums across the rows of two-dimensional array
+def compute_rows_sum(hdf5_file, path, N_columns, N_processes, method = 'Process'):
+    """Parallel computation of the sums across the rows of two-dimensional array
         accessible at the node specified by 'path' in the 'hdf5_file' 
         hierarchical data format. 
     """                 
-
 
     assert isinstance(method, str), "parameter 'method' must consist in a string of characters"
     assert method in ('Ordinary', 'Pool'), "parameter 'method' must be set to either of 'Ordinary' or 'Pool'"
@@ -870,14 +724,9 @@ def compute_rows_sum(hdf5_file, path, N_columns, N_processes,
     
     return rows_sum
         
-    
-#***************************************************************************************
-# compute_availabilities
-#***************************************************************************************
-    
 
 def compute_availabilities(hdf5_file, N_columns, damping, N_processes, rows_sum):
-    r"""Coordinates the computation and update of the availability matrix
+    """Coordinates the computation and update of the availability matrix
         for Affinity Propagation clustering. 
     
     Parameters
@@ -901,7 +750,6 @@ def compute_availabilities(hdf5_file, N_columns, damping, N_processes, rows_sum)
         of its rows entries. 
     """
     
-    
     slice_queue = multiprocessing.JoinableQueue()
     
     pid_list = []
@@ -922,20 +770,14 @@ def compute_availabilities(hdf5_file, N_columns, damping, N_processes, rows_sum)
     gc.collect()
     
     
-#***************************************************************************************
-# check_convergence
-#***************************************************************************************
-
-    
 def check_convergence(hdf5_file, iteration, convergence_iter, max_iter):
-    r"""If the estimated number of clusters has not changed for 'convergence_iter'
+    """If the estimated number of clusters has not changed for 'convergence_iter'
         consecutive iterations in a total of 'max_iter' rounds of message-passing, 
         the procedure herewith returns 'True'.
         Otherwise, returns 'False'.
         Parameter 'iteration' identifies the run of message-passing 
         that has just completed.
     """
-
 
     Worker.hdf5_lock.acquire()
     
@@ -964,22 +806,12 @@ def check_convergence(hdf5_file, iteration, convergence_iter, max_iter):
     return False
     
 
-#***************************************************************************************
-# cluster_labels_init
-#***************************************************************************************
-
-
 def cluster_labels_init(hdf5_file, I, c_array_lock, *numpy_args):
 
     global g_hdf5_file, g_I, g_c_array_lock, g_c
     
     g_hdf5_file, g_I, g_c_array_lock = hdf5_file, I, c_array_lock
     g_c = to_numpy_array(*numpy_args)
-
-
-#***************************************************************************************
-# cluster_labels_init_B
-#***************************************************************************************
 
 
 def cluster_labels_init_B(hdf5_file, I, ii, iix, s_reduced_array_lock,
@@ -991,20 +823,10 @@ def cluster_labels_init_B(hdf5_file, I, ii, iix, s_reduced_array_lock,
     g_s_reduced_array_lock = s_reduced_array_lock
     g_s_reduced = to_numpy_array(*numpy_args)
     
-    
-#***************************************************************************************
-# multiprocessing_cluster_labels_A
-#***************************************************************************************
-
 
 def multiprocessing_cluster_labels_A(rows_slice):
 
     cluster_labels_A(g_hdf5_file, g_c, g_c_array_lock, g_I, rows_slice)
-
-
-#***************************************************************************************
-# multiprocessing_cluster_labels_B
-#***************************************************************************************
 
 
 def multiprocessing_cluster_labels_B(rows_slice):
@@ -1013,27 +835,16 @@ def multiprocessing_cluster_labels_B(rows_slice):
                      g_I, g_ii, g_iix, rows_slice)
 
 
-#***************************************************************************************
-# multiprocessing_cluster_labels_C
-#***************************************************************************************
-
-
 def multiprocessing_cluster_labels_C(rows_slice):
 
     cluster_labels_C(g_hdf5_file, g_c, g_c_array_lock, g_I, rows_slice)
 
 
-#***************************************************************************************
-# cluster_labels_A
-#***************************************************************************************
-
-
 def cluster_labels_A(hdf5_file, c, lock, I, rows_slice):
-    r"""One of the task to be performed by a pool of subprocesses, as the first
+    """One of the task to be performed by a pool of subprocesses, as the first
         step in identifying the cluster labels and indices of the cluster centers
         for Affinity Propagation clustering.
     """
-
 
     with Worker.hdf5_lock:
         with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -1048,16 +859,10 @@ def cluster_labels_A(hdf5_file, c, lock, I, rows_slice):
     del s
 
 
-#***************************************************************************************
-# cluster_labels_B
-#***************************************************************************************
-
-
 def cluster_labels_B(hdf5_file, s_reduced, lock, I, ii, iix, rows_slice):
-    r"""Second task to be performed by a pool of subprocesses before
+    """Second task to be performed by a pool of subprocesses before
         the cluster labels and cluster center indices can be identified.
     """
-
 
     with Worker.hdf5_lock:
         with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -1073,17 +878,11 @@ def cluster_labels_B(hdf5_file, s_reduced, lock, I, ii, iix, rows_slice):
     del s
 
 
-#***************************************************************************************
-# cluster_labels_C
-#***************************************************************************************
-
-
 def cluster_labels_C(hdf5_file, c, lock, I, rows_slice):
-    r"""Third and final task to be executed by a pool of subprocesses, as part of the
+    """Third and final task to be executed by a pool of subprocesses, as part of the
         goal of finding the cluster to which each data-point has been assigned by 
         Affinity Propagation clustering on a given data-set.
     """
-
 
     with Worker.hdf5_lock:
         with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -1097,14 +896,9 @@ def cluster_labels_C(hdf5_file, c, lock, I, rows_slice):
         
     del s
         
-            
-#***************************************************************************************
-# get_cluster_labels
-#***************************************************************************************
 
-    
 def get_cluster_labels(hdf5_file, N_processes):
-    r"""
+    """
     Returns
     -------
     cluster_centers_indices : array of shape (n_clusters,)
@@ -1113,7 +907,6 @@ def get_cluster_labels(hdf5_file, N_processes):
     labels : array of shape (n_samples,)
         Specify the label of the cluster to which each point has been assigned.
     """
-
 
     with Worker.hdf5_lock:
         with tables.open_file(hdf5_file, 'r+') as fileh:
@@ -1214,17 +1007,11 @@ def get_cluster_labels(hdf5_file, N_processes):
     return cluster_centers_indices, labels
 
 
-#***************************************************************************************
-# output_clusters
-#***************************************************************************************
-    
-    
 def output_clusters(labels, cluster_centers_indices):
-    r"""Write in tab-separated files the vectors of cluster identities and
+    """Write in tab-separated files the vectors of cluster identities and
         of indices of cluster centers.
     """
             
-    
     here = os.getcwd()
     try:
         output_directory = os.path.join(here, 'concurrent_AP_output')
@@ -1250,13 +1037,8 @@ def output_clusters(labels, cluster_centers_indices):
                        delimiter = '\t')
 
 
-#***************************************************************************************
-# set_preference
-#***************************************************************************************
-
-
 def set_preference(data, chunk_size):
-    r"""Return the median of the distribution of pairwise L2 Euclidean distances 
+    """Return the median of the distribution of pairwise L2 Euclidean distances 
         between samples (the rows of 'data') as the default preference parameter
         for Affinity Propagation clustering.
 
@@ -1278,7 +1060,6 @@ def set_preference(data, chunk_size):
         as the median of the list of median pairwise distances between the data-points
         selected as part of each of 15 rounds of random subsampling.
     """
-
 
     N_samples, N_features = data.shape
     
@@ -1316,11 +1097,6 @@ def set_preference(data, chunk_size):
     return preference
 
 
-#***************************************************************************************
-# main
-#***************************************************************************************
-    
-        
 def main():
 
     opts, args = parse_options()
@@ -1422,15 +1198,6 @@ def main():
     output_clusters(labels, cluster_centers_indices)
 
 
-#***************************************************************************************
-#***************************************************************************************
-
-
 if __name__ == '__main__':
 
     main()
-
-
-#***************************************************************************************
-#***************************************************************************************
-
