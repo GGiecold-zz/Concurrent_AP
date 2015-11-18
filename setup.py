@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 
-
-
 # Concurrent_AP/setup.py;
 
 # Author: Gregory Giecold for the GC Yuan Lab
@@ -10,7 +8,7 @@
 # Contact: g.giecold@gmail.com, ggiecold@jimmy.harvard.edu
 
 
-r"""Setup script for Concurrent_AP, a scalable and concurrent programming
+"""Setup script for Concurrent_AP, a scalable and concurrent programming
 implementation of Affinity Propagation clustering. 
 
 Affinity Propagation is a clustering algorithm based on passing 
@@ -35,21 +33,11 @@ Data Points", Science Feb. 2007
 """
 
 
-
-
-#*********************************************************************************
-#*********************************************************************************
-
-
 from codecs import open
 from os import path
 from sys import version
 from setuptools import setup, find_packages
 
-
-#*********************************************************************************
-#*********************************************************************************
-    
     
 here = path.abspath(path.dirname(__file__))
 
@@ -100,9 +88,3 @@ setup(name = 'Concurrent_AP',
           'console_scripts': ['Concurrent_AP = Concurrent_AP:main'],
           }    
 )
-
-
-#*********************************************************************************
-#*********************************************************************************
-
-
