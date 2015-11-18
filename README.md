@@ -65,7 +65,7 @@ The latter will automatically compute a preference parameter from the data-set.
 
 When the rounds of message-passing among data-points have completed, a folder containing a file of cluster labels and a file of cluster centers indices both in tab-separated format is created in your current working directory.
 
-References
+Reference
 ----------
 
 Brendan J. Frey and Delbert Dueck. "Clustering by Passing Messages between Data Points", Science Feb. 2007
