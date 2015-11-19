@@ -20,6 +20,7 @@ Concurrent_AP requires Python 2.7 along with the following packages and a few mo
 * psutil
 * PyTables
 * scikit-learn
+* setuptools
 
 Upon checking that the required dependencies are installed, you can upload Concurrent_AP from the official Python Package Index (PyPI) as follows:
 * open a terminal window;
