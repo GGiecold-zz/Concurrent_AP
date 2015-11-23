@@ -46,7 +46,7 @@ with open(path.join(here, 'README'), encoding = 'utf-8') as f:
     
 
 setup(name = 'Concurrent_AP',
-      version = '1.1',
+      version = '1.2',
       
       description = 'Scalable and parallel programming implementation of Affinity Propagation clustering',
       long_description = long_description,
