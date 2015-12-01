@@ -915,7 +915,6 @@ def get_cluster_labels(hdf5_file, N_processes):
     
     I = np.where(np.add(a[:], r[:]) > 0)[0]
     K = I.size
-    print('K = {}'.format(K))
     
     if K == 0:
         labels = np.empty((N, 1))
