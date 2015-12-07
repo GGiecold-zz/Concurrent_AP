@@ -26,6 +26,8 @@ Upon checking that the required dependencies are installed, you can download Con
 * open a terminal window;
 * type in the command: ```pip install Concurrent_AP```
 
+The code herewith has been tested on Fedora, OS X and Ubuntu and should work fine on any other member of the Unix-like family of operating systems.
+
 Usage and Command Line Options
 ------------------------------
 
