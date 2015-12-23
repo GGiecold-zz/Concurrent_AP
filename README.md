@@ -71,4 +71,5 @@ When the rounds of message-passing among data-points have completed, a folder co
 Reference
 ----------
 
-Brendan J. Frey and Delbert Dueck. "Clustering by Passing Messages between Data Points", Science Feb. 2007
+Brendan J. Frey and Delbert Dueck. "Clustering by Passing Messages between Data Points".
+In: Science, 315, 5814, pp. 972-976. 2007
