@@ -26,10 +26,10 @@ across subprocesses, thereby taking full advantage of the resources
 of multi-core processors and bypassing the Global Interpreter Lock 
 of the standard Python interpreter, CPython.
 
-References
-----------
-Brendan J. Frey and Delbert Dueck, "Clustering by Passing Messages between
-Data Points", Science Feb. 2007
+Reference
+---------
+Brendan J. Frey and Delbert Dueck., "Clustering by Passing Messages Between Data Points". 
+In: Science, Vol. 315, no. 5814, pp. 972-976. 2007
 """
 
 
