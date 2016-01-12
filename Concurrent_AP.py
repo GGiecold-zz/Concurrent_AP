@@ -179,7 +179,7 @@ def parse_options():
                       default = False, action = 'store_true',
                       help = ("Specifies if a matrix of similarities "
                               "has already been computed; only makes sense "
-                              "with -h [default %default]"))
+                              "with -f or --file in effect [default %default]"))
     parser.add_option('-i', '--iterations', dest = 'max_iter', 
                       default = 200, type = 'int', 
                       help = ("The maximum number of message passing "   
