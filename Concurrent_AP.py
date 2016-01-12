@@ -1021,11 +1021,11 @@ def output_clusters(labels, cluster_centers_indices):
     else:
         fmt = '%d'
                 
-    with open(output_directory + '/labels.tsv', 'w') as fh:
+    with open(os.path.join(output_directory, 'labels.tsv'), 'w') as fh:
         np.savetxt(fh, labels, fmt = fmt, delimiter = '\t')
         
     if cluster_centers_indices is not None:    
-        with open(output_directory + '/cluster_centers_indices.tsv', 'w') as fh:
+        with open(os.path.join(output_directory, 'cluster_centers_indices.tsv'), 'w') as fh:
             np.savetxt(fh, cluster_centers_indices, fmt = '%.1f', 
                        delimiter = '\t')
 
@@ -1095,7 +1095,7 @@ def main():
     opts, args = parse_options()
     
     with open(args, 'r') as fh:
-        data = np.loadtxt(fh, dtype = float)
+        data = np.loadtxt(fh, dtype = float, delimiter = '\t')
         
     N = data.shape[0]
     
