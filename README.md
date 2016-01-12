@@ -33,7 +33,7 @@ Usage and Command Line Options
 
 See the docstrings associated to each function of the Concurrent_AP module for more information and an understanding of how different tasks are organized and shared among subprocesses.
 
-Usage: ```Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held. Each row corresponds to a sample and the features must be tab-separated (*.tsv file).
+Usage: ```Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held. Each row corresponds to a sample and the features must be tab-separated (*.tsv file). It is also assumed that this file does not display any header.
 
 * ```-c``` or ```--convergence```: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
 * ```-d``` or ```--damping```: the damping parameter of Affinity Propagation (defaults to 0.5);
