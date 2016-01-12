@@ -37,7 +37,7 @@ Usage: ```Concurrent_AP [options] file_name```, where ```file_name``` denotes th
 
 * ```-c``` or ```--convergence```: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
 * ```-d``` or ```--damping```: the damping parameter of Affinity Propagation (defaults to 0.5);
-* ```-f``` or ```--file```: option to specify the file name or file handle of the hierarchical data format where the matrices involved in Affinity Propagation clustering will be stored (defaults to a temporary file);
+* ```-f``` or ```--file```: option to specify the file name or file handle of the hierarchical data format where the matrices involved in Affinity Propagation clustering will be stored, as part of a group named 'aff_prop_group' at the root of the HDF5 (defaults to a temporary file); the dataset itself won't be accessed there and needn't be stored there either;
 * ```-i``` or ```--iterations```: maximum number of message-passing iterations (defaults to 200);
 * ```-m``` or ```--multiprocessing```: the number of processes to use;
 * ```-p``` or ```--preference```: the preference parameter of Affinity Propagation (if not specified, will be determined as the median of the distribution of pairwise L2 Euclidean distances between samples);
@@ -58,7 +58,7 @@ The following few lines illustrate the use of Concurrent_AP on the 'Iris data-se
 >>> iris = datasets.load_iris()
 >>> data = iris.data
 >>> with open('./iris_data.txt', 'w') as f:
-    np.savetxt(f, data, fmt = '%.4f')
+        np.savetxt(f, data, fmt = '%.4f')
 ```
 
 * Open a terminal window.
