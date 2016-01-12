@@ -33,7 +33,7 @@ Usage and Command Line Options
 
 See the docstrings associated to each function of the Concurrent_AP module for more information and an understanding of how different tasks are organized and shared among subprocesses.
 
-Usage: ```Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held.
+Usage: ```Concurrent_AP [options] file_name```, where ```file_name``` denotes the path where the data to be processed by Affinity Propagation clustering is held. Each row corresponds to a sample and the features must be tab-separated (*.tsv file).
 
 * ```-c``` or ```--convergence```: specify the number of iterations without change in the number of clusters that signals convergence (defaults to 15);
 * ```-d``` or ```--damping```: the damping parameter of Affinity Propagation (defaults to 0.5);
@@ -57,12 +57,12 @@ The following few lines illustrate the use of Concurrent_AP on the 'Iris data-se
 
 >>> iris = datasets.load_iris()
 >>> data = iris.data
->>> with open('./iris_data.txt', 'w') as f:
-        np.savetxt(f, data, fmt = '%.4f')
+>>> with open('./iris_data.tsv', 'w') as f:
+        np.savetxt(f, data, fmt = '%.4f', delimiter = '\t')
 ```
 
 * Open a terminal window.
-* Type in: ```Concurrent_AP --preference -5.47 --v iris_data.txt``` or simply ```Concurrent_AP iris_data.txt```
+* Type in: ```Concurrent_AP --preference -5.47 --v iris_data.tsv``` or simply ```Concurrent_AP iris_data.tsv```
 
 The latter will automatically compute a preference parameter from the data-set.
 
