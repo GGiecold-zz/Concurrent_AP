@@ -215,7 +215,7 @@ def parse_options():
         parser.error('A data file must be specified')
     
     if opts.similarities and (opts.hdf5_file is None):
-        parser.error("Option -s is conditional on -h")
+        parser.error("Option -s is conditional on -f")
     
     if not (1 <= opts.count <= 20):
         parser.error("The number of processes must range "
