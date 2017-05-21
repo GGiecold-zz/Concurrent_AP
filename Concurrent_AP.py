@@ -66,7 +66,7 @@ def memory():
 
     mem_info = dict()
 
-    for k, v in psutil.virtual_memory().__dict__.iteritems():
+    for k, v in psutil.virtual_memory().__dict__.items():
            mem_info[k] = int(v)
            
     return mem_info
@@ -135,7 +135,7 @@ def chunk_generator(N, n):
 
     chunk_size = get_chunk_size(N, n)
     
-    for start in xrange(0, N, chunk_size):
+    for start in range(0, N, chunk_size):
         yield slice(start, min(start + chunk_size, N))
     
     
@@ -276,13 +276,11 @@ def check_HDF5_arrays(hdf5_file, N, convergence_iter):
     Worker.hdf5_lock.release()
 
         
-class Worker(multiprocessing.Process):
+class Worker(multiprocessing.Process, metaclass=ABCMeta):
     """Abstract Base Class whose methods are meant to be overriden 
         by the various classes of processes designed to handle 
         the various stages of Affinity Propagation clustering.
     """
-    
-    __metaclass__ = ABCMeta
     
     hdf5_lock = multiprocessing.Lock()
     
@@ -547,7 +545,7 @@ def compute_similarities(hdf5_file, data, N_processes):
     slice_queue = multiprocessing.JoinableQueue()
     
     pid_list = []
-    for i in xrange(N_processes):
+    for i in range(N_processes):
         worker = Similarities_worker(hdf5_file, '/aff_prop_group/similarities',
                                      data, slice_queue)
         worker.daemon = True
@@ -592,7 +590,7 @@ def add_fluctuations(hdf5_file, N_columns, N_processes):
     slice_queue = multiprocessing.JoinableQueue()
         
     pid_list = []
-    for i in xrange(N_processes):
+    for i in range(N_processes):
         worker = Fluctuations_worker(hdf5_file,
                    '/aff_prop_group/similarities', random_state, 
                    N_columns, slice_queue)
@@ -620,7 +618,7 @@ def compute_responsibilities(hdf5_file, N_columns, damping, N_processes):
     slice_queue = multiprocessing.JoinableQueue()
     
     pid_list = []
-    for i in xrange(N_processes):
+    for i in range(N_processes):
         worker = Responsibilities_worker(hdf5_file, '/aff_prop_group',
                    N_columns, damping, slice_queue)
         worker.daemon = True
@@ -683,7 +681,7 @@ def compute_rows_sum(hdf5_file, path, N_columns, N_processes, method = 'Process'
                 N_rows = hdf5_array.nrows
                 assert N_columns == N_rows
                 
-                for i in xrange(0, N_columns, chunk_size):
+                for i in range(0, N_columns, chunk_size):
                     slc = slice(i, min(i+chunk_size, N_columns))
                     tmp = hdf5_array[:, slc]
                     rows_sum[slc] = tmp[:].sum(axis = 0)
@@ -739,7 +737,7 @@ def compute_availabilities(hdf5_file, N_columns, damping, N_processes, rows_sum)
     slice_queue = multiprocessing.JoinableQueue()
     
     pid_list = []
-    for i in xrange(N_processes):
+    for i in range(N_processes):
         worker = Availabilities_worker(hdf5_file, '/aff_prop_group',
                    N_columns, damping, slice_queue, rows_sum)
         worker.daemon = True
@@ -935,7 +933,7 @@ def get_cluster_labels(hdf5_file, N_processes):
         c[I] = np.arange(K)
         # determine the exemplars of clusters, applying some 
         # cosmetics to our results before returning them
-        for k in xrange(K):
+        for k in range(K):
             ii = np.where(c == k)[0]
             
             iix = np.full(N, False, dtype = bool)
@@ -1051,7 +1049,7 @@ def set_preference(data, chunk_size):
     rng = np.arange(0, N_samples, dtype = int)
     medians = []
     
-    for i in xrange(15):
+    for i in range(15):
         selected_samples = np.random.choice(N_samples, size = chunk_size, replace = False)
         samples = data[selected_samples, :]
                 
@@ -1060,11 +1058,11 @@ def set_preference(data, chunk_size):
         n = chunk_size * N_samples - (chunk_size * (chunk_size + 1) / 2)
                 
         rows = np.zeros(0, dtype = int)
-        for i in xrange(chunk_size):
+        for i in range(chunk_size):
             rows = np.append(rows, np.full(N_samples - i, i, dtype = int))
                 
         cols = np.zeros(0, dtype = int)
-        for i in xrange(chunk_size):
+        for i in range(chunk_size):
             cols = np.append(cols, np.delete(rng, selected_samples[:i+1]))
                         
         triu_indices = tuple((rows, cols))
@@ -1114,8 +1112,8 @@ def main():
             
             if opts.verbose:
                 delta = sim_end - sim_start
-                print("INFO: concurrent_AP: the computation of the matrix of pairwise "
-                      "similarities took {} seconds".format(round(delta, 4)))
+                print(("INFO: concurrent_AP: the computation of the matrix of pairwise "
+                      "similarities took {} seconds".format(round(delta, 4))))
         
         if opts.preference is None:
         # The preference is set to the median of all the entries 
@@ -1139,7 +1137,7 @@ def main():
         add_preference(hdf5_file, preference)
         add_fluctuations(hdf5_file, N, opts.count)
 
-        for iteration in xrange(opts.max_iter):
+        for iteration in range(opts.max_iter):
             iteration_start = time.time()
             
             compute_responsibilities(hdf5_file, N, opts.damping, opts.count)
@@ -1155,8 +1153,8 @@ def main():
             
             if opts.verbose:
                 delta = iteration_end - iteration_start
-                print("INFO: iteration # {0} took {1} "
-                      "seconds".format(iteration + 1, round(delta, 4)))
+                print(("INFO: iteration # {0} took {1} "
+                      "seconds".format(iteration + 1, round(delta, 4))))
             
             if convergence_flag:
                 break
@@ -1171,11 +1169,11 @@ def main():
         
         if opts.verbose:
             delta = cc_end - cc_start
-            print("INFO: the procedure 'get_cluster_labels' "
-                  "completed in {} seconds".format(round(delta, 4)))
+            print(("INFO: the procedure 'get_cluster_labels' "
+                  "completed in {} seconds".format(round(delta, 4))))
             
     except EnvironmentError as err:
-        print('ERROR: Affinity_propagation: {0}'.format(err)) 
+        print(('ERROR: Affinity_propagation: {0}'.format(err))) 
     finally:
         if fh is not None:
             fh.close()
