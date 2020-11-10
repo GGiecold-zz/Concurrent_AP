@@ -41,7 +41,6 @@ import numpy as np
 import optparse
 import os
 import psutil
-from sklearn.metrics.pairwise import euclidean_distances
 import sys
 import tables
 from tempfile import NamedTemporaryFile
@@ -54,6 +53,11 @@ warnings.filterwarnings('ignore', category = DeprecationWarning)
 
 __all__ = []
 
+def euclidean_distances(x, y, squared=False):
+    if squared:
+        return np.dot(x,x) - 2 * np.dot(x,y) + np.dot(y, y)
+    else: 
+        return np.sqrt(np.dot(x,x) - 2 * np.dot(x,y) + np.dot(y, y))
 
 def memory():
     """Determine memory specifications of the machine.
