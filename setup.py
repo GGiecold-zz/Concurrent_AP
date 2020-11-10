@@ -65,7 +65,7 @@ setup(name = 'Concurrent_AP',
       
       py_modules = ['Concurrent_AP'],
       platforms = ('Any',),
-      install_requires = ['numpy>=1.9.0', 'psutil', 'sklearn', 'setuptools', 'tables'],
+      install_requires = ['numpy>=1.9.0', 'psutil', 'setuptools', 'tables'],
                           
       classifiers = ['Development Status :: 4 - Beta',
                    'Environment :: Console',
